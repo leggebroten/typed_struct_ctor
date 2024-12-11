@@ -203,6 +203,12 @@ unless defaulted or provided as attributes to the constructor.
     }
   ```
 
+## String keyed attributes
+The attributes map provided to the constructor functions can be either string-keyed or atom-key, not mixed.
+
+Under the covers we are using [Ecto.Changeset.cast/4](https://hexdocs.pm/ecto/Ecto.Changeset.html#cast/4), to
+copy and cast attributes into the struct being created.  
+
 ## Installation
 Because this plugin supports the interface defined by the `TypedStruct` macro, installation assumes you've already
 added that dependency.

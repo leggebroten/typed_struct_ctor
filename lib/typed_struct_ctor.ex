@@ -196,13 +196,20 @@ defmodule TypedStructCtor do
 
   @doc false
   def do_from(mod, base_struct, attrs) when is_struct(base_struct) do
-    attrs =
-      base_struct
-      |> Map.from_struct()
-      |> Map.drop(mod.__not_mapped__())
-      |> Map.merge(attrs)
+    # `attrs` could be string-keyed map, use Ecto to convert to validated atom-keys
+    case cast(mod.__struct__(), attrs, mod.__all__(), force_changes: true) do
+      %{valid?: true, changes: valid_attrs} ->
+        merged_attrs =
+          base_struct
+          |> Map.from_struct()
+          |> Map.drop(mod.__not_mapped__())
+          |> Map.merge(valid_attrs)
 
-    TypedStructCtor.do_new(mod, attrs)
+        TypedStructCtor.do_new(mod, merged_attrs)
+
+      other ->
+        other
+    end
   end
 
   def do_from(_mod, _base_struct, _attrs), do: {:error, :base_struct_must_be_a_struct}

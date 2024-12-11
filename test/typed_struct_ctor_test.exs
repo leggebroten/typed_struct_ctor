@@ -50,6 +50,7 @@ defmodule Mappable do
     plugin(TypedStructEctoChangeset)
     plugin(TypedStructCtor)
 
+    field(:defaulted, :string, default: "defaulted")
     field(:mapped_by_default, :string, default: "bar")
     field(:id, :string, mappable?: false, default_apply: {Ecto.UUID, :generate, []})
   end
@@ -72,6 +73,22 @@ defmodule TypedStructCtorTest do
                  not_required_not_defaulted: "2",
                  required_defaulted: "3",
                  required_not_defaulted: "4"
+               })
+    end
+
+    test "when attributes are string keys, map to atoms" do
+      assert {:ok,
+              %AStruct{
+                not_required_defaulted: 1,
+                not_required_not_defaulted: 2,
+                required_defaulted: 3,
+                required_not_defaulted: 4
+              }} ==
+               AStruct.new(%{
+                 "not_required_defaulted" => "1",
+                 "not_required_not_defaulted" => "2",
+                 "required_defaulted" => "3",
+                 "required_not_defaulted" => "4"
                })
     end
 
@@ -190,6 +207,19 @@ defmodule TypedStructCtorTest do
       {:ok, mapped_struct} = Mappable.from(original_struct, %{id: "baz"})
 
       assert mapped_struct.id == "baz"
+    end
+
+    test "when attributes have string keys, they're cast correctly as atom keys" do
+      original_struct = Mappable.new!(%{"mapped_by_default" => "foo"})
+
+      {:ok, %{id: "baz", mapped_by_default: "bar"}} =
+        Mappable.from(original_struct, %{"id" => "baz", "mapped_by_default" => "bar"})
+
+      {:ok, %{id: "baz", mapped_by_default: "foo"}} = Mappable.from(original_struct, %{"id" => "baz"})
+
+      {:ok, %{id: id, mapped_by_default: "foo"}} = Mappable.from(original_struct)
+      refute id == original_struct.id
+      {:ok, _uuid} = Ecto.UUID.cast(id)
     end
 
     test "when fails validation, return error tuple" do
