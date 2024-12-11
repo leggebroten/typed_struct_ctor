@@ -4,7 +4,7 @@ defmodule TypedStructCtor.MixProject do
   def project do
     [
       app: :typed_struct_ctor,
-      version: "0.1.1",
+      version: "0.1.2",
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -35,14 +35,14 @@ defmodule TypedStructCtor.MixProject do
   defp package() do
     [
       licenses: ["MIT"],
-      links: %{"Github" => "https://github.com/withbelay/typed_struct_ctor"}
+      links: %{"Github" => "https://github.com/leggebroten/typed_struct_ctor"}
     ]
   end
 
   defp deps do
     [
       {:credo, "~> 1.7", only: [:dev, :test]},
-      {:dialyxir, "~> 1.3", only: [:dev, :test]},
+      {:dialyxir, "~> 1.3", only: [:dev, :test], runtime: false},
       {:ecto, "~> 3.10"},
       {:ex_doc, "~> 0.30", only: :dev},
       {:typedstruct, "~> 0.5.2"},
