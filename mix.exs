@@ -35,7 +35,7 @@ defmodule TypedStructCtor.MixProject do
   defp package() do
     [
       licenses: ["MIT"],
-      links: %{"Github" => "https://github.com/withbelay/typed_struct_ctor"}
+      links: %{"Github" => "https://github.com/leggebroten/typed_struct_ctor"}
     ]
   end
 
